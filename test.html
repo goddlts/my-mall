@@ -13,15 +13,37 @@
     //    BOM
     // window.alert()
 
-    const token = '123'
-    // 本地存储，把数据记录到文件中
-    window.localStorage.setItem('token', token)
+    // const token = '123'
+    // // 本地存储，把数据记录到文件中
+    // window.localStorage.setItem('token', token)
 
-    console.log(window.localStorage.getItem('token'))
+    // console.log(window.localStorage.getItem('token'))
 
     // window.localStorage.clear()
     // 本地存储，把数据记录到内存中
     // window.sessionStorage
+
+
+    // 变量的解构赋值
+    // const arr = [1, 2, 3]
+    // arr[0]
+    // arr[1]
+
+    // const [a, b, ...c] = [1, 2, 3, 4, 6]
+    // console.log(a, b, c)
+
+    // const obj = { name: 'zs', age: 18 }
+    // // obj.name obj.age
+    // const name = 'xxx'
+    // const { name: n, age } = obj
+    // console.log(n, age)
+
+    // res.data
+    const obj = { data: { token: 'xxx' }, meta: { status: '200', msg: '登录成功' } }
+    const { meta: { status, msg } } = obj
+
+    console.log(status, msg)
+
   </script>
 </body>
 </html>

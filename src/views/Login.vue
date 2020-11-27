@@ -26,32 +26,55 @@ export default {
     }
   },
   methods: {
-    handleLogin () {
-      this.axios
-        .post('login', this.form)
-        .then(res => {
-          // res =>   { data: { data: {}, meta: { status, msg } } }
-          const status = res.data.meta.status
-          const msg = res.data.meta.msg
-          if (status === 200) {
-            // 提示登录成功
-            this.$message({
-              type: 'success',
-              message: msg
-            })
-            // 跳转到后台的首页
-            this.$router.push('/')
-            // 记录token
-            const token = res.data.data.token
-            window.localStorage.setItem('token', token)
-          } else {
-            // 提示登录失败
-            this.$message({
-              type: 'error',
-              message: msg
-            })
-          }
+    async handleLogin () {
+      const res = await this.axios.post('login', this.form)
+      // const status = res.data.meta.status
+      // const msg = res.data.meta.msg
+
+      const { meta: { status, msg } } = res.data
+
+      if (status === 200) {
+        // 提示登录成功
+        this.$message({
+          type: 'success',
+          message: msg
         })
+        // 跳转到后台的首页
+        this.$router.push('/')
+        // 记录token
+        // const token = res.data.data.token
+        const { data: { token } } = res.data
+        window.localStorage.setItem('token', token)
+      } else {
+        // 提示登录失败
+        this.$message({
+          type: 'error',
+          message: msg
+        })
+      }
+      // .then(res => {
+      //   // res =>   { data: { data: {}, meta: { status, msg } } }
+      //   const status = res.data.meta.status
+      //   const msg = res.data.meta.msg
+      //   if (status === 200) {
+      //     // 提示登录成功
+      //     this.$message({
+      //       type: 'success',
+      //       message: msg
+      //     })
+      //     // 跳转到后台的首页
+      //     this.$router.push('/')
+      //     // 记录token
+      //     const token = res.data.data.token
+      //     window.localStorage.setItem('token', token)
+      //   } else {
+      //     // 提示登录失败
+      //     this.$message({
+      //       type: 'error',
+      //       message: msg
+      //     })
+      //   }
+      // })
     }
   }
 }
