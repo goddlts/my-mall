@@ -10,7 +10,7 @@
           <div class="title">电商后台管理系统</div>
         </el-col>
         <el-col class="btn" :span="2">
-          <el-button>退出</el-button>
+          <el-button @click="handleLogout">退出</el-button>
         </el-col>
       </el-row>
     </el-header>
@@ -115,6 +115,18 @@ export default {
         this.asideWidth = '200px'
         this.collapseText = '折叠'
       }
+    },
+    // 退出
+    handleLogout () {
+      // 提示
+      this.$message({
+        type: 'success',
+        message: '退出成功'
+      })
+      // 跳转到登录页面
+      this.$router.push('/login')
+      // 删除localStorage
+      window.localStorage.clear()
     }
   }
 }
