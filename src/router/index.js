@@ -13,7 +13,15 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: Home
+    component: Home,
+    // 嵌套路由--子路由
+    children: [
+      {
+        path: 'users',
+        name: 'users',
+        component: () => import('../views/users/Index.vue')
+      }
+    ]
   }
   // {
   //   path: '/about',
