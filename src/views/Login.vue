@@ -42,6 +42,8 @@ export default {
             // 跳转到后台的首页
             this.$router.push('/')
             // 记录token
+            const token = res.data.data.token
+            window.localStorage.setItem('token', token)
           } else {
             // 提示登录失败
             this.$message({
