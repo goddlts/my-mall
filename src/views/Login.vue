@@ -9,7 +9,7 @@
         <el-input type="password" v-model="form.password"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button class="login-button" type="primary">登  录</el-button>
+        <el-button class="login-button" @click="handleLogin" type="primary">登  录</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -20,9 +20,36 @@ export default {
   data () {
     return {
       form: {
-        username: '',
-        password: ''
+        username: 'admin',
+        password: '123456'
       }
+    }
+  },
+  methods: {
+    handleLogin () {
+      this.axios
+        .post('login', this.form)
+        .then(res => {
+          // res =>   { data: { data: {}, meta: { status, msg } } }
+          const status = res.data.meta.status
+          const msg = res.data.meta.msg
+          if (status === 200) {
+            // 提示登录成功
+            this.$message({
+              type: 'success',
+              message: msg
+            })
+            // 跳转到后台的首页
+            this.$router.push('/')
+            // 记录token
+          } else {
+            // 提示登录失败
+            this.$message({
+              type: 'error',
+              message: msg
+            })
+          }
+        })
     }
   }
 }

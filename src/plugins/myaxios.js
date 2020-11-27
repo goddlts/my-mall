@@ -7,7 +7,7 @@ export default {
       timeout: 10000
       // headers: {'X-Custom-Header': 'foobar'}
     })
-    
+
     Vue.prototype.axios = instance
   }
 }
