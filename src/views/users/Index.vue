@@ -86,7 +86,7 @@
       :total="total">
     </el-pagination>
     <!-- 添加用户的弹出框 -->
-    <el-dialog title="添加用户" :visible.sync="addUserDialogFormVisible">
+    <el-dialog @closed="handleClose" title="添加用户" :visible.sync="addUserDialogFormVisible">
       <el-form
         label-width="80px"
         label-position="right"
@@ -243,6 +243,7 @@ export default {
       //   })
       // })
     },
+    // 添加功能
     async handleAdd () {
       const res = await this.axios.post('users', this.formData)
       const { meta: { status, msg } } = res.data
@@ -256,12 +257,22 @@ export default {
         this.loadData()
         // 隐藏对话框
         this.addUserDialogFormVisible = false
-        // 清空文本框
+        // 清空文本框--对话框的关闭事件中实现
       } else {
         this.$message({
           type: 'error',
           message: msg
         })
+      }
+    },
+    // 添加对话框的关闭事件，清空文本框
+    handleClose () {
+      // this.formData.username = ''
+      // this.formData.password = ''
+
+      // 遍历对象中的所有属性
+      for (const key in this.formData) {
+        this.formData[key] = ''
       }
     }
   }
