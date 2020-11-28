@@ -52,7 +52,6 @@
         label="用户状态">
       </el-table-column>
       <el-table-column
-        prop="create_time"
         label="操作">
       </el-table-column>
     </el-table>
@@ -74,6 +73,9 @@ export default {
   methods: {
     // 加载用户列表的数据
     async loadData () {
+      // 发请求的时候要在请求头上设置Authorization 值是token
+      const token = localStorage.getItem('token')
+      this.axios.defaults.headers.common.Authorization = token
       const res = await this.axios.get('users?pagenum=1&pagesize=10')
       const { meta: { status, msg } } = res.data
       if (status === 200) {
