@@ -44,12 +44,22 @@
         label="角色">
       </el-table-column>
       <el-table-column
-        prop="create_time"
         label="创建时间">
+        <!-- 自定义列，时间 -->
+        <template slot-scope="scope">
+          {{ scope.row.create_time | fmtDate('YYYY-MM-DD') }}
+        </template>
       </el-table-column>
       <el-table-column
-        prop="mg_state"
         label="用户状态">
+        <!-- 自定义列，用户状态 -->
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.mg_state"
+            active-color="#13ce66"
+            inactive-color="#ff4949">
+          </el-switch>
+        </template>
       </el-table-column>
       <el-table-column
         label="操作">
