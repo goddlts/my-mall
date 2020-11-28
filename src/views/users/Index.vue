@@ -10,7 +10,7 @@
     <el-row class="row">
       <el-col :span="24">
         <el-input placeholder="请输入内容" v-model="searchText" class="searchClass">
-          <el-button slot="append" icon="el-icon-search"></el-button>
+          <el-button @click="handleSearch" slot="append" icon="el-icon-search"></el-button>
         </el-input>
         <!-- 添加按钮 -->
         <el-button type="success">添加用户</el-button>
@@ -26,6 +26,7 @@
       style="width: 100%">
       <el-table-column
         type="index"
+        label="#"
         width="50">
       </el-table-column>
       <el-table-column
@@ -57,6 +58,7 @@
         <!-- 自定义列，用户状态 -->
         <template slot-scope="scope">
           <el-switch
+            @change="handleChange(scope.row.mg_state, scope.row.id)"
             v-model="scope.row.mg_state"
             active-color="#13ce66"
             inactive-color="#ff4949">
@@ -111,7 +113,7 @@ export default {
       // 发请求的时候要在请求头上设置Authorization 值是token
       const token = localStorage.getItem('token')
       this.axios.defaults.headers.common.Authorization = token
-      const res = await this.axios.get(`users?pagenum=${this.pagenum}&pagesize=${this.pagesize}`)
+      const res = await this.axios.get(`users?query=${this.searchText}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`)
       // 请求结束之后要获取，总共有多少条数据
       this.total = res.data.data.total
       // console.log(res.data)
@@ -138,6 +140,29 @@ export default {
       this.pagenum = val
       this.loadData()
       console.log(`当前页: ${val}`)
+    },
+    // 搜索
+    handleSearch () {
+      // 把页码设置成1
+      this.pagenum = 1
+      this.loadData()
+    },
+    // 状态改变的事件
+    async handleChange (state, id) {
+      // console.log(state)
+      const res = await this.axios.put(`users/${id}/state/${state}`)
+      const { meta: { status, msg } } = res.data
+      if (status === 200) {
+        this.$message({
+          type: 'success',
+          message: msg
+        })
+      } else {
+        this.$message({
+          type: 'error',
+          message: msg
+        })
+      }
     }
   }
 }
