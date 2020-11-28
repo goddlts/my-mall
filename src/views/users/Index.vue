@@ -92,7 +92,7 @@
         label-position="right"
         :model="formData">
         <el-form-item label="用户名">
-          <el-input v-model="formData.username" autocomplete="off"></el-input>
+          <el-input clearable v-model="formData.username" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="密码">
           <el-input v-model="formData.password" show-password autocomplete="off"></el-input>
@@ -106,7 +106,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="addUserDialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addUserDialogFormVisible = false">确 定</el-button>
+        <el-button type="primary" @click="handleAdd">确 定</el-button>
       </div>
     </el-dialog>
   </el-card>
@@ -242,6 +242,27 @@ export default {
       //     message: '已取消删除'
       //   })
       // })
+    },
+    async handleAdd () {
+      const res = await this.axios.post('users', this.formData)
+      const { meta: { status, msg } } = res.data
+      if (status === 201) {
+        // 提示
+        this.$message({
+          type: 'success',
+          message: msg
+        })
+        // 重新加载数据
+        this.loadData()
+        // 隐藏对话框
+        this.addUserDialogFormVisible = false
+        // 清空文本框
+      } else {
+        this.$message({
+          type: 'error',
+          message: msg
+        })
+      }
     }
   }
 }
