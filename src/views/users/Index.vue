@@ -73,6 +73,16 @@
         </template>
       </el-table-column>
     </el-table>
+    <!-- 分页 -->
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pagenum"
+      :page-sizes="[2, 3, 4, 5]"
+      :page-size="pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total">
+    </el-pagination>
   </el-card>
 </template>
 
@@ -83,7 +93,11 @@ export default {
       searchText: '',
       // 用户列表数据
       data: [],
-      loading: false
+      loading: false,
+      // 分页数据
+      pagenum: 1,
+      pagesize: 2,
+      total: 0
     }
   },
   created () {
@@ -97,7 +111,10 @@ export default {
       // 发请求的时候要在请求头上设置Authorization 值是token
       const token = localStorage.getItem('token')
       this.axios.defaults.headers.common.Authorization = token
-      const res = await this.axios.get('users?pagenum=1&pagesize=10')
+      const res = await this.axios.get(`users?pagenum=${this.pagenum}&pagesize=${this.pagesize}`)
+      // 请求结束之后要获取，总共有多少条数据
+      this.total = res.data.data.total
+      // console.log(res.data)
       // 请求结束之后隐藏loading
       this.loading = false
       const { meta: { status, msg } } = res.data
@@ -109,6 +126,18 @@ export default {
           message: msg
         })
       }
+    },
+    // 分页的方法
+    handleSizeChange (val) {
+      this.pagesize = val
+      this.pagenum = 1
+      this.loadData()
+      console.log(`每页 ${val} 条`)
+    },
+    handleCurrentChange (val) {
+      this.pagenum = val
+      this.loadData()
+      console.log(`当前页: ${val}`)
     }
   }
 }
