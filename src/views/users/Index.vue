@@ -13,7 +13,7 @@
           <el-button @click="handleSearch" slot="append" icon="el-icon-search"></el-button>
         </el-input>
         <!-- 添加按钮 -->
-        <el-button type="success">添加用户</el-button>
+        <el-button @click="addUserDialogFormVisible = true" type="success">添加用户</el-button>
       </el-col>
     </el-row>
 
@@ -68,9 +68,9 @@
       <el-table-column
         label="操作"
         width="180">
-        <template>
+        <template slot-scope="scope">
           <el-button type="primary" plain size="mini" icon="el-icon-edit"></el-button>
-          <el-button type="danger" plain size="mini" icon="el-icon-delete"></el-button>
+          <el-button type="danger" @click="handleDelete(scope.row.id)" plain size="mini" icon="el-icon-delete"></el-button>
           <el-button type="success" plain size="mini" icon="el-icon-check"></el-button>
         </template>
       </el-table-column>
@@ -85,6 +85,30 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
+    <!-- 添加用户的弹出框 -->
+    <el-dialog title="添加用户" :visible.sync="addUserDialogFormVisible">
+      <el-form
+        label-width="80px"
+        label-position="right"
+        :model="formData">
+        <el-form-item label="用户名">
+          <el-input v-model="formData.username" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="密码">
+          <el-input v-model="formData.password" show-password autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="formData.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号码">
+          <el-input v-model="formData.mobile" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addUserDialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addUserDialogFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -99,7 +123,15 @@ export default {
       // 分页数据
       pagenum: 1,
       pagesize: 2,
-      total: 0
+      total: 0,
+      // 控制添加用户的对话框的显示和隐藏
+      addUserDialogFormVisible: false,
+      formData: {
+        username: '',
+        password: '',
+        mobile: '',
+        email: ''
+      }
     }
   },
   created () {
@@ -163,6 +195,53 @@ export default {
           message: msg
         })
       }
+    },
+    // 删除功能
+    async handleDelete (id) {
+      try {
+        await this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        // 发送请求，删除当前的用户
+        const res = await this.axios.delete(`users/${id}`)
+        const { meta: { status, msg } } = res.data
+        if (status === 200) {
+          this.$message({
+            type: 'success',
+            message: msg
+          })
+          // 如果当前是最后一页，并且当前只有一条数据 pagenum - 1
+          if (this.pagenum > 1 && this.data.length === 1) {
+            this.pagenum--
+          }
+          // 删除成功之后要重新加载数据
+          this.loadData()
+        } else {
+          this.$message({
+            type: 'error',
+            message: msg
+          })
+        }
+      } catch (err) {
+        console.dir(err)
+      }
+      // this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+      //   confirmButtonText: '确定',
+      //   cancelButtonText: '取消',
+      //   type: 'warning'
+      // }).then(() => {
+      //   this.$message({
+      //     type: 'success',
+      //     message: '删除成功!'
+      //   })
+      // }).catch(() => {
+      //   this.$message({
+      //     type: 'info',
+      //     message: '已取消删除'
+      //   })
+      // })
     }
   }
 }
