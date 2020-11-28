@@ -19,6 +19,7 @@
 
     <!-- 用户列表，表格 -->
     <el-table
+      v-loading="loading"
       border
       stripe
       :data="data"
@@ -29,7 +30,8 @@
       </el-table-column>
       <el-table-column
         prop="username"
-        label="姓名">
+        label="姓名"
+        width="180">
       </el-table-column>
       <el-table-column
         prop="email"
@@ -62,7 +64,13 @@
         </template>
       </el-table-column>
       <el-table-column
-        label="操作">
+        label="操作"
+        width="180">
+        <template>
+          <el-button type="primary" plain size="mini" icon="el-icon-edit"></el-button>
+          <el-button type="danger" plain size="mini" icon="el-icon-delete"></el-button>
+          <el-button type="success" plain size="mini" icon="el-icon-check"></el-button>
+        </template>
       </el-table-column>
     </el-table>
   </el-card>
@@ -74,7 +82,8 @@ export default {
     return {
       searchText: '',
       // 用户列表数据
-      data: []
+      data: [],
+      loading: false
     }
   },
   created () {
@@ -83,10 +92,14 @@ export default {
   methods: {
     // 加载用户列表的数据
     async loadData () {
+      // 显示加载提示
+      this.loading = true
       // 发请求的时候要在请求头上设置Authorization 值是token
       const token = localStorage.getItem('token')
       this.axios.defaults.headers.common.Authorization = token
       const res = await this.axios.get('users?pagenum=1&pagesize=10')
+      // 请求结束之后隐藏loading
+      this.loading = false
       const { meta: { status, msg } } = res.data
       if (status === 200) {
         this.data = res.data.data.users
